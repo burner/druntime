@@ -192,6 +192,11 @@ else version( CRuntime_Bionic )
 
         alias ushort fexcept_t;
     }
+    else version(ARM)
+    {
+        alias uint fenv_t;
+        alias uint fexcept_t;
+    }
     else
     {
         static assert(false, "Architecture not supported.");

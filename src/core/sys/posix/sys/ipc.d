@@ -131,6 +131,19 @@ else version( CRuntime_Bionic )
             ushort  seq;
         }
     }
+    else version (ARM)
+    {
+        struct ipc_perm
+        {
+            key_t   key;
+            ushort  uid;
+            ushort  gid;
+            ushort  cuid;
+            ushort  cgid;
+            mode_t  mode;
+            ushort  seq;
+        }
+    }
     else
     {
         static assert(false, "Architecture not supported.");
