@@ -519,13 +519,14 @@ public:
 
 
     /++
-        Adds or subtracts two durations.
+        Adds, subtracts or calculates the modulo of two durations.
 
         The legal types of arithmetic for $(D Duration) using this operator are
 
         $(TABLE
         $(TR $(TD Duration) $(TD +) $(TD Duration) $(TD -->) $(TD Duration))
         $(TR $(TD Duration) $(TD -) $(TD Duration) $(TD -->) $(TD Duration))
+        $(TR $(TD Duration) $(TD %) $(TD Duration) $(TD -->) $(TD Duration))
         $(TR $(TD Duration) $(TD +) $(TD TickDuration) $(TD -->) $(TD Duration))
         $(TR $(TD Duration) $(TD -) $(TD TickDuration) $(TD -->) $(TD Duration))
         )
@@ -534,9 +535,8 @@ public:
             rhs = The duration to add to or subtract from this $(D Duration).
       +/
     Duration opBinary(string op, D)(D rhs) const nothrow @nogc
-        if((op == "+" || op == "-") &&
-           (is(_Unqual!D == Duration) ||
-            is(_Unqual!D == TickDuration)))
+        if(((op == "+" || op == "-" || op == "%") && is(_Unqual!D == Duration)) ||
+           ((op == "+" || op == "-") && is(_Unqual!D == TickDuration)))
     {
         static if(is(_Unqual!D == Duration))
             return Duration(mixin("_hnsecs " ~ op ~ " rhs._hnsecs"));
@@ -552,23 +552,31 @@ public:
             {
                 assert((cast(D)Duration(5)) + (cast(E)Duration(7)) == Duration(12));
                 assert((cast(D)Duration(5)) - (cast(E)Duration(7)) == Duration(-2));
+                assert((cast(D)Duration(5)) % (cast(E)Duration(7)) == Duration(5));
                 assert((cast(D)Duration(7)) + (cast(E)Duration(5)) == Duration(12));
                 assert((cast(D)Duration(7)) - (cast(E)Duration(5)) == Duration(2));
+                assert((cast(D)Duration(7)) % (cast(E)Duration(5)) == Duration(2));
 
                 assert((cast(D)Duration(5)) + (cast(E)Duration(-7)) == Duration(-2));
                 assert((cast(D)Duration(5)) - (cast(E)Duration(-7)) == Duration(12));
+                assert((cast(D)Duration(5)) % (cast(E)Duration(-7)) == Duration(5));
                 assert((cast(D)Duration(7)) + (cast(E)Duration(-5)) == Duration(2));
                 assert((cast(D)Duration(7)) - (cast(E)Duration(-5)) == Duration(12));
+                assert((cast(D)Duration(7)) % (cast(E)Duration(-5)) == Duration(2));
 
                 assert((cast(D)Duration(-5)) + (cast(E)Duration(7)) == Duration(2));
                 assert((cast(D)Duration(-5)) - (cast(E)Duration(7)) == Duration(-12));
+                assert((cast(D)Duration(-5)) % (cast(E)Duration(7)) == Duration(-5));
                 assert((cast(D)Duration(-7)) + (cast(E)Duration(5)) == Duration(-2));
                 assert((cast(D)Duration(-7)) - (cast(E)Duration(5)) == Duration(-12));
+                assert((cast(D)Duration(-7)) % (cast(E)Duration(5)) == Duration(-2));
 
                 assert((cast(D)Duration(-5)) + (cast(E)Duration(-7)) == Duration(-12));
                 assert((cast(D)Duration(-5)) - (cast(E)Duration(-7)) == Duration(2));
+                assert((cast(D)Duration(-5)) % (cast(E)Duration(7)) == Duration(-5));
                 assert((cast(D)Duration(-7)) + (cast(E)Duration(-5)) == Duration(-12));
                 assert((cast(D)Duration(-7)) - (cast(E)Duration(-5)) == Duration(-2));
+                assert((cast(D)Duration(-7)) % (cast(E)Duration(5)) == Duration(-2));
             }
 
             foreach(T; _TypeTuple!(TickDuration, const TickDuration, immutable TickDuration))
@@ -649,14 +657,15 @@ public:
 
 
     /++
-        Adds or subtracts two durations as well as assigning the result to this
-        $(D Duration).
+        Adds, subtracts or calculates the modulo of two durations as well as
+        assigning the result to this $(D Duration).
 
         The legal types of arithmetic for $(D Duration) using this operator are
 
         $(TABLE
         $(TR $(TD Duration) $(TD +) $(TD Duration) $(TD -->) $(TD Duration))
         $(TR $(TD Duration) $(TD -) $(TD Duration) $(TD -->) $(TD Duration))
+        $(TR $(TD Duration) $(TD %) $(TD Duration) $(TD -->) $(TD Duration))
         $(TR $(TD Duration) $(TD +) $(TD TickDuration) $(TD -->) $(TD Duration))
         $(TR $(TD Duration) $(TD -) $(TD TickDuration) $(TD -->) $(TD Duration))
         )
@@ -665,9 +674,8 @@ public:
             rhs = The duration to add to or subtract from this $(D Duration).
       +/
     ref Duration opOpAssign(string op, D)(in D rhs) nothrow @nogc
-        if((op == "+" || op == "-") &&
-           (is(_Unqual!D == Duration) ||
-            is(_Unqual!D == TickDuration)))
+        if(((op == "+" || op == "-" || op == "%") && is(_Unqual!D == Duration)) ||
+           ((op == "+" || op == "-") && is(_Unqual!D == TickDuration)))
     {
         static if(is(_Unqual!D == Duration))
             mixin("_hnsecs " ~ op ~ "= rhs._hnsecs;");
@@ -699,23 +707,31 @@ public:
         {
             test1!"+="(Duration(5), (cast(E)Duration(7)), Duration(12));
             test1!"-="(Duration(5), (cast(E)Duration(7)), Duration(-2));
+            test1!"%="(Duration(5), (cast(E)Duration(7)), Duration(5));
             test1!"+="(Duration(7), (cast(E)Duration(5)), Duration(12));
             test1!"-="(Duration(7), (cast(E)Duration(5)), Duration(2));
+            test1!"%="(Duration(7), (cast(E)Duration(5)), Duration(2));
 
             test1!"+="(Duration(5), (cast(E)Duration(-7)), Duration(-2));
             test1!"-="(Duration(5), (cast(E)Duration(-7)), Duration(12));
+            test1!"%="(Duration(5), (cast(E)Duration(-7)), Duration(5));
             test1!"+="(Duration(7), (cast(E)Duration(-5)), Duration(2));
             test1!"-="(Duration(7), (cast(E)Duration(-5)), Duration(12));
+            test1!"%="(Duration(7), (cast(E)Duration(-5)), Duration(2));
 
             test1!"+="(Duration(-5), (cast(E)Duration(7)), Duration(2));
             test1!"-="(Duration(-5), (cast(E)Duration(7)), Duration(-12));
+            test1!"%="(Duration(-5), (cast(E)Duration(7)), Duration(-5));
             test1!"+="(Duration(-7), (cast(E)Duration(5)), Duration(-2));
             test1!"-="(Duration(-7), (cast(E)Duration(5)), Duration(-12));
+            test1!"%="(Duration(-7), (cast(E)Duration(5)), Duration(-2));
 
             test1!"+="(Duration(-5), (cast(E)Duration(-7)), Duration(-12));
             test1!"-="(Duration(-5), (cast(E)Duration(-7)), Duration(2));
+            test1!"%="(Duration(-5), (cast(E)Duration(-7)), Duration(-5));
             test1!"+="(Duration(-7), (cast(E)Duration(-5)), Duration(-12));
             test1!"-="(Duration(-7), (cast(E)Duration(-5)), Duration(-2));
+            test1!"%="(Duration(-7), (cast(E)Duration(-5)), Duration(-2));
         }
 
         foreach(T; _TypeTuple!(TickDuration, const TickDuration, immutable TickDuration))
