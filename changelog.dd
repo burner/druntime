@@ -6,9 +6,11 @@ $(COMMENT Pending changelog for 2.067.0.
 $(BUGSTITLE Library Changes,
 
 $(LI $(RELATIVE_LINK2 TypeInfo.initializer, `TypeInfo.init` has been renamed to
-    `TypeInfo.initializer`.))
-$(LI $(RELATIVE_LINK2 AA.clear, Associative array `clear` method to remove all
-    elements has been added.))
+    `TypeInfo.initializer`.)
+)
+$(LI $(RELATIVE_LINK2 core.sys.windows, The `core.sys.windows` package has been
+    greatly expanded.)
+)
 )
 
 $(BUGSTITLE Library Changes,
@@ -29,15 +31,15 @@ $(LI $(LNAME2 TypeInfo.initializer, `TypeInfo.init` has been renamed to
         2.074.0 release, so that the type property `init` takes over.
     )
 )
-$(LI $(LNAME2 AA.clear, Associative array `clear` method to remove all
-    elements has been added.)
 
-    $(P One can now use `aa.clear()` to remove all elements from an
-        associative array. This allows one to remove all elements from all
-        references to the same array (setting to `null` just cleared the
-        reference, not removed the elements).
+$(LI $(LNAME2 core.sys.windows, The `core.sys.windows` package has been
+    greatly expanded.)
+
+    $(P The `core.sys.windows` package now contains a considerably more
+        comprehensive set of Windows API bindings. The package has been
+        adapted from $(WEB github.com/smjgordon/bindings, Stewart Gordon's
+        bindings), which were originally adapted from the MinGW project.
     )
-)
 )
 )
 
